@@ -12,26 +12,28 @@
         #ranking { display: none; position: absolute; top: 10%; left: 30%; width: 40%; background: white; padding: 20px; border-radius: 15px; border: 4px solid #333; z-index: 100; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 8px; }
+        #message { position: absolute; bottom: 200px; left: 30%; width: 400px; font-size: 28px; color: #d32f2f; font-weight: bold; background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; border: 4px solid #d32f2f; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; display: none; }
     </style>
 </head>
 <body>
     <h1>あの日見たバンドを超える旅：Neiroのチョコ大作戦！</h1>
     <div id="instructions">Neiroと一緒にチョコを集めて、目指せバンドの頂点！10点集めてクリアしてね。</div>
     <div id="score">スコア: <span id="count">0</span></div>
+    
     <div id="message"></div>
     <div id="ranking">
         <h2>ランキング TOP5</h2>
         <table><thead><tr><th>名前</th><th>スコア</th><th>日付</th></tr></thead><tbody id="rank-body"></tbody></table>
         <button onclick="location.reload()">もう一回遊ぶ</button>
     </div>
-    <div id="message" style="position: absolute; bottom: 200px; left: 30%; width: 400px; font-size: 28px; color: #d32f2f; font-weight: bold; background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; border: 4px solid #d32f2f; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; display: none;"></div>
+
     <img id="neiro" src="Neiro1.png" alt="Neiro">
     <audio id="bgm" loop><source src="10時よ.mp3" type="audio/wav"></audio>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-        const messageDisplay = document.getElementById('message');
+
         const firebaseConfig = {
             apiKey: "AIzaSyACV13o8mGiTP6m2wtvRPBG_wX2Xcbb-hI",
             authDomain: "neirogameanoban.firebaseapp.com",
@@ -43,11 +45,13 @@
         };
 
         const db = getFirestore(initializeApp(firebaseConfig));
+        const messageDisplay = document.getElementById('message');
+        const countDisplay = document.getElementById('count');
+        const neiro = document.getElementById('neiro');
+        const bgm = document.getElementById('bgm');
 
-        // ランキング表示機能
         async function showRanking() {
-            const rankDiv = document.getElementById('ranking');
-            rankDiv.style.display = "block";
+            document.getElementById('ranking').style.display = "block";
             const q = query(collection(db, "rankings"), orderBy("score", "desc"), limit(5));
             const querySnapshot = await getDocs(q);
             const body = document.getElementById('rank-body');
@@ -59,17 +63,12 @@
             });
         }
 
-        // ゲームの処理
         let count = 0;
         let isGameOver = false;
         let bgmStarted = false;
-        const neiro = document.getElementById('neiro');
-        const countDisplay = document.getElementById('count');
-        const bgm = document.getElementById('bgm');
         const foods = ['Natto.png', 'yakiimo.png', 'chocolate.png', 'Pinnaple.png'];
         const gameTimer = setInterval(dropFood, 1500);
-        const messageDisplay = document.getElementById('message');
-        
+
         function dropFood() {
             if (isGameOver) return;
             const food = document.createElement('img');
@@ -89,16 +88,18 @@
             food.addEventListener('click', async () => {
                 if (isGameOver) return;
                 if (!bgmStarted) { bgm.play(); bgmStarted = true; }
-             
                 neiro.src = 'Neiro2.png';
                 setTimeout(() => neiro.src = 'Neiro1.png', 200);
                 
-                if (foodName === 'chocolate.png') { count++;
-                messageDisplay.innerText = "美味しい！チョコ最高！";
+                if (foodName === 'chocolate.png') { 
+                    count++;
+                    messageDisplay.innerText = "美味しい！チョコ最高！";
+                } else { 
+                    count--; 
+                    messageDisplay.innerText = "チョコが食べたいよ〜";
                 }
-                else { count--; 
-                messageDisplay.innerText = "チョコが食べたいよ〜";
-                }
+                messageDisplay.style.display = "block";
+                setTimeout(() => messageDisplay.style.display = "none", 1000);
                 countDisplay.innerText = count;
 
                 if (count >= 10) {
