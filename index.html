@@ -9,19 +9,20 @@
         .food { width: 80px; position: absolute; top: -100px; cursor: pointer; z-index: 10; padding: 40px; }
         #score { font-size: 28px; margin-top: 20px; font-weight: bold; }
         
-        /* メッセージをキャラクターの横（左側）に配置するスタイル */
+        /* メッセージのスタイルを調整 */
         #message { 
             position: absolute; 
-            bottom: 100px; 
-            left: 20%; /* 画面の左寄りに配置 */
-            width: 200px;
-            font-size: 24px; 
-            color: #d32f2f; /* 赤文字 */
+            bottom: 200px; /* 少し上に配置 */
+            left: 60%;     /* 右側に移動！数字を増やすとさらに右に行くよ */
+            width: 300px;  /* 枠の幅を大きくしたよ */
+            font-size: 28px; /* 文字も少し大きく */
+            color: #d32f2f; 
             font-weight: bold;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border-radius: 10px;
-            border: 2px solid #d32f2f;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px; /* 内側の余白を増やして大きく見せる */
+            border-radius: 15px;
+            border: 4px solid #d32f2f; /* 枠線を太く */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 影をつけて浮き出させる */
         }
     </style>
 </head>
