@@ -24,7 +24,7 @@
         <table><thead><tr><th>名前</th><th>スコア</th><th>日付</th></tr></thead><tbody id="rank-body"></tbody></table>
         <button onclick="location.reload()">もう一回遊ぶ</button>
     </div>
-
+    <div id="message" style="position: absolute; bottom: 200px; left: 30%; width: 400px; font-size: 28px; color: #d32f2f; font-weight: bold; background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; border: 4px solid #d32f2f; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; display: none;"></div>
     <img id="neiro" src="Neiro1.png" alt="Neiro">
     <audio id="bgm" loop><source src="10時よ.mp3" type="audio/wav"></audio>
 
@@ -68,7 +68,8 @@
         const bgm = document.getElementById('bgm');
         const foods = ['Natto.png', 'yakiimo.png', 'chocolate.png', 'Pinnaple.png'];
         const gameTimer = setInterval(dropFood, 1500);
-
+        const messageDisplay = document.getElementById('message');
+        
         function dropFood() {
             if (isGameOver) return;
             const food = document.createElement('img');
