@@ -22,13 +22,16 @@
         // リポジトリにアップしたファイル名と完全に一致させてください
         const foods = ['Natto.png', 'yakiimo.png', 'chocolate.png', 'Pinnaple.png'];
 
-        function dropFood() {
+    function dropFood() {
             const food = document.createElement('img');
-            // ランダムに選ぶ
             food.src = foods[Math.floor(Math.random() * foods.length)];
             food.className = 'food';
-            // 横位置をランダムにする
-            food.style.left = Math.random() * (window.innerWidth - 80) + 'px';
+            
+            // 【変更点】Neiroちゃんの位置を基準にランダムな場所を決める
+            const neiroLeft = neiro.offsetLeft;
+            const randomOffset = (Math.random() - 0.5) * 100; // Neiroの周り±50px
+            food.style.left = (neiroLeft + randomOffset) + 'px';
+            
             document.body.appendChild(food);
 
             let top = -100;
