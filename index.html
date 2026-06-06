@@ -13,6 +13,15 @@
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 8px; }
         #message { position: absolute; bottom: 200px; left: 30%; width: 400px; font-size: 28px; color: #d32f2f; font-weight: bold; background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; border: 4px solid #d32f2f; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; display: none; }
+        <a href="https://www.youtube.com/channel/UC9tdREypdhZQ9Hemq82r95Q" target="_blank">
+        <img src="ロゴ１-removebg-preview.jpg" alt="チャンネルへ" style="width: 100px; cursor: pointer;">
+    </a>
+
+        #ranking a img:hover {
+                transform: scale(1.1); /* マウスを乗せると1.1倍に拡大 */
+                transition: transform 0.2s;
+        }
+    
     </style>
 </head>
 <body>
@@ -24,6 +33,7 @@
     <div id="ranking">
         <h2>ランキング TOP5</h2>
         <table><thead><tr><th>名前</th><th>スコア</th><th>日付</th></tr></thead><tbody id="rank-body"></tbody></table>
+
         <button onclick="location.reload()">もう一回遊ぶ</button>
     </div>
 
