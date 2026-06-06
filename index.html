@@ -7,10 +7,9 @@
         body { text-align: center; font-family: sans-serif; background: #f0f0f0; overflow: hidden; margin: 0; }
         #neiro { width: 150px; position: absolute; bottom: 20px; left: calc(50% - 75px); z-index: 5; transition: transform 0.1s; }
         .food { width: 80px; position: absolute; top: -100px; cursor: pointer; z-index: 10; padding: 40px; }
-        
         #instructions { font-size: 20px; color: #333; margin-top: 10px; }
         #score { position: absolute; bottom: 50px; left: 500px; font-size: 28px; font-weight: bold; background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: 10px; }
-        #message { position: absolute; bottom: 200px; left: 30%; width: 400px; font-size: 28px; color: #d32f2f; font-weight: bold; background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; border: 4px solid #d32f2f; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; }
+        #message { position: absolute; bottom: 200px; left: 30%; width: 400px; font-size: 28px; color: #d32f2f; font-weight: bold; background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; border: 4px solid #d32f2f; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; display: none; }
     </style>
 </head>
 <body>
@@ -24,7 +23,23 @@
         <source src="10時よ.mp3" type="audio/wav">
     </audio>
 
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyACV13o8mGiTP6m2wtvRPBG_wX2Xcbb-hI",
+            authDomain: "neirogameanoban.firebaseapp.com",
+            projectId: "neirogameanoban",
+            storageBucket: "neirogameanoban.firebasestorage.app",
+            messagingSenderId: "884708706267",
+            appId: "1:884708706267:web:b9ffc17361554427aa89fe",
+            measurementId: "G-303LBLLY8B"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         let count = 0;
         let isGameOver = false;
         let bgmStarted = false;
@@ -33,7 +48,6 @@
         const messageDisplay = document.getElementById('message');
         const bgm = document.getElementById('bgm');
         const foods = ['Natto.png', 'yakiimo.png', 'chocolate.png', 'Pinnaple.png'];
-
         const gameTimer = setInterval(dropFood, 1500);
 
         function dropFood() {
@@ -54,38 +68,26 @@
 
             food.addEventListener('click', () => {
                 if (isGameOver) return;
-
-                // BGMの開始（初回クリック時のみ）
-                if (!bgmStarted) {
-                    bgm.play();
-                    bgmStarted = true;
-                }
-
+                if (!bgmStarted) { bgm.play(); bgmStarted = true; }
                 neiro.src = 'Neiro2.png';
                 setTimeout(() => neiro.src = 'Neiro1.png', 200);
 
-                if (foodName === 'chocolate.png') {
-                    count++;
-                    messageDisplay.innerText = "美味しい！チョコ最高！";
-                } else {
-                    count--;
-                    messageDisplay.innerText = "チョコが食べたいよ〜";
-                }
+                if (foodName === 'chocolate.png') { count++; } else { count--; }
                 countDisplay.innerText = count;
 
                 if (count >= 10) {
-                    messageDisplay.innerText = "クリア！！やったね！";
                     isGameOver = true;
+                    bgm.pause();
+                    const name = prompt("クリア！お名前を入力してランキングに登録してね！");
+                    if (name) {
+                        addDoc(collection(db, "rankings"), { name: name, score: count });
+                        alert("登録完了！");
+                    }
+                    messageDisplay.style.display = "block";
+                    messageDisplay.innerText = "クリア！！やったね！";
                     clearInterval(gameTimer);
-                    bgm.pause(); // クリアしたら止める
                 }
-                
-                food.remove();
-                clearInterval(timer);
-                
-                if (count < 10) {
-                    setTimeout(() => messageDisplay.innerText = "", 2000);
-                }
+                food.remove(); clearInterval(timer);
             });
         }
     </script>
