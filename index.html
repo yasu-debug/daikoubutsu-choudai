@@ -44,14 +44,20 @@
     <div id="message"></div>
     <img id="neiro" src="Neiro1.png" alt="Neiro">
 
-    <script>
+   <script>
         let count = 0;
+        let isGameOver = false; // ゲーム終了状態を管理する変数
         const neiro = document.getElementById('neiro');
         const countDisplay = document.getElementById('count');
         const messageDisplay = document.getElementById('message');
         const foods = ['Natto.png', 'yakiimo.png', 'chocolate.png', 'Pinnaple.png'];
 
+        // 食べ物を降らせる処理を変数に入れておく
+        const gameTimer = setInterval(dropFood, 1500);
+
         function dropFood() {
+            if (isGameOver) return; // ゲームが終わっていたら何も作らない
+
             const food = document.createElement('img');
             const foodName = foods[Math.floor(Math.random() * foods.length)];
             food.src = foodName;
@@ -67,6 +73,8 @@
             }, 20);
 
             food.addEventListener('click', () => {
+                if (isGameOver) return; // 終わった後はクリックしても反応させない
+
                 neiro.src = 'Neiro2.png';
                 setTimeout(() => neiro.src = 'Neiro1.png', 200);
 
@@ -79,21 +87,22 @@
                 }
                 countDisplay.innerText = count;
 
-                // 30点クリア判定
+                // 10点クリア判定
                 if (count >= 10) {
                     messageDisplay.innerText = "クリア！！やったね！";
+                    isGameOver = true; // ゲーム終了状態にする
+                    clearInterval(gameTimer); // 食べ物を降らせるタイマーを止める
                 }
                 
                 food.remove();
                 clearInterval(timer);
                 
-                if (count < 30) {
+                // クリア時はメッセージを消さないように条件分岐
+                if (count < 10) {
                     setTimeout(() => messageDisplay.innerText = "", 2000);
                 }
             });
         }
-
-        setInterval(dropFood, 1500);
     </script>
 </body>
 </html>
