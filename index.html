@@ -8,7 +8,7 @@
         #neiro { width: 150px; position: absolute; bottom: 20px; left: calc(50% - 75px); z-index: 5; transition: transform 0.1s; }
         .food { width: 80px; position: absolute; top: -100px; cursor: pointer; z-index: 10; padding: 40px; }
         #instructions { font-size: 20px; color: #333; margin-top: 10px; }
-        #score { position: absolute; bottom: 50px; left: 500px; font-size: 28px; font-weight: bold; background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: 10px; }
+        #score { position: absolute; bottom: 50px; left: 550px; font-size: 28px; font-weight: bold; background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: 10px; }
         #ranking { display: none; position: absolute; top: 10%; left: 30%; width: 40%; background: white; padding: 20px; border-radius: 15px; border: 4px solid #333; z-index: 100; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { border: 1px solid #ddd; padding: 8px; }
@@ -92,7 +92,7 @@
                 neiro.src = 'Neiro2.png';
                 setTimeout(() => neiro.src = 'Neiro1.png', 200);
                 
-                if (foodName === 'chocolate.png') { count++; } 
+                if (foodName === 'chocolate.png') { count++;
                 messageDisplay.innerText = "美味しい！チョコ最高！";
                 }
                 else { count--; 
