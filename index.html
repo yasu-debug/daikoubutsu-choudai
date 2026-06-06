@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>大好物ちょうだい！</title>
+    <style>
+        body { text-align: center; font-family: sans-serif; background: #f0f0f0; }
+        #neiro { width: 300px; cursor: pointer; transition: transform 0.1s; margin-top: 50px; }
+        #neiro:active { transform: scale(0.95); }
+        #score { font-size: 32px; margin-top: 20px; color: #333; }
+    </style>
+</head>
+<body>
+    <h1>Neiroにチョコをあげよう！</h1>
+    <!-- Neiro1.png を表示させるよ -->
+    <img id="neiro" src="Neiro1.png" alt="Neiro">
+    <div id="score">スコア: <span id="count">0</span></div>
+
+    <script>
+        let count = 0;
+        const neiro = document.getElementById('neiro');
+        const countDisplay = document.getElementById('count');
+
+        neiro.addEventListener('click', () => {
+            // クリックした時に画像を変える
+            neiro.src = 'Neiro2.png'; 
+            
+            // 0.2秒後に元の画像に戻す
+            setTimeout(() => {
+                neiro.src = 'Neiro1.png';
+            }, 200);
+
+            count++;
+            countDisplay.innerText = count;
+        });
+    </script>
+</body>
+</html>
