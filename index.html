@@ -7,31 +7,41 @@
         body { text-align: center; font-family: sans-serif; background: #f0f0f0; overflow: hidden; margin: 0; }
         #neiro { width: 150px; position: absolute; bottom: 20px; left: calc(50% - 75px); z-index: 5; transition: transform 0.1s; }
         .food { width: 80px; position: absolute; top: -100px; cursor: pointer; z-index: 10; padding: 40px; }
-        #score { font-size: 28px; margin-top: 20px; font-weight: bold; }
         
-        /* メッセージのスタイルを調整 */
+        /* スコア表示を左下に移動 */
+        #score { 
+            position: absolute; 
+            bottom: 50px; 
+            left: 20px; 
+            font-size: 28px; 
+            font-weight: bold; 
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        
+        /* メッセージ枠 */
         #message { 
             position: absolute; 
-            bottom: 200px; /* 少し上に配置 */
-            left: 30%;     /* 右側に移動！数字を増やすとさらに右に行くよ */
-            width: 400px;  /* 枠の幅を大きくしたよ */
-            font-size: 28px; /* 文字も少し大きく */
+            bottom: 200px; 
+            left: 40%; 
+            width: 400px; 
+            font-size: 28px; 
             color: #d32f2f; 
             font-weight: bold;
             background: rgba(255, 255, 255, 0.9);
-            padding: 20px; /* 内側の余白を増やして大きく見せる */
+            padding: 25px; 
             border-radius: 15px;
-            border: 4px solid #d32f2f; /* 枠線を太く */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 影をつけて浮き出させる */
+            border: 4px solid #d32f2f;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <h1>チョコはクリック！他は無視！</h1>
     <div id="score">スコア: <span id="count">0</span></div>
-    
     <div id="message"></div>
-    
     <img id="neiro" src="Neiro1.png" alt="Neiro">
 
     <script>
@@ -68,11 +78,18 @@
                     messageDisplay.innerText = "チョコが食べたいよ〜";
                 }
                 countDisplay.innerText = count;
+
+                // 30点クリア判定
+                if (count >= 30) {
+                    messageDisplay.innerText = "クリア！！やったね！";
+                }
                 
                 food.remove();
                 clearInterval(timer);
                 
-                setTimeout(() => messageDisplay.innerText = "", 2000);
+                if (count < 30) {
+                    setTimeout(() => messageDisplay.innerText = "", 2000);
+                }
             });
         }
 
