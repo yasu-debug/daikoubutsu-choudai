@@ -80,7 +80,12 @@
                     bgm.pause();
                     const name = prompt("クリア！お名前を入力してランキングに登録してね！");
                     if (name) {
-                        addDoc(collection(db, "rankings"), { name: name, score: count });
+                        import { serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+                            addDoc(collection(db, "rankings"), { 
+                            name: name, 
+                            score: count,
+                            createdAt: serverTimestamp() // ここで時間を追加！
+                        });
                         alert("登録完了！");
                     }
                     messageDisplay.style.display = "block";
