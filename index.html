@@ -5,9 +5,8 @@
     <title>大好物ちょうだい！</title>
     <style>
         body { text-align: center; font-family: sans-serif; background: #f0f0f0; overflow: hidden; margin: 0; }
-        #neiro { width: 150px; position: absolute; bottom: 20px; left: calc(50% - 75px); z-index: 5; }
-        /* 食べ物の横位置を固定するために修正 */
-        .food { width: 80px; position: absolute; top: -100px; cursor: pointer; z-index: 10; transition: top 0.05s linear; }
+        #neiro { width: 150px; position: absolute; bottom: 20px; left: calc(50% - 75px); z-index: 5; transition: transform 0.1s; }
+        .food { width: 80px; position: absolute; top: -100px; cursor: pointer; z-index: 10; padding: 20px; }
         #score { font-size: 28px; margin-top: 20px; font-weight: bold; }
     </style>
 </head>
@@ -28,33 +27,30 @@
             food.src = foodName;
             food.className = 'food';
             
-            // Neiroの頭上（中央）からのみ降ってくるように固定
+            // Neiroの頭上から降ってくる
             food.style.left = (neiro.offsetLeft + 35) + 'px'; 
-            
             document.body.appendChild(food);
 
             let top = -100;
             const timer = setInterval(() => {
                 top += 3;
                 food.style.top = top + 'px';
-
-                // 画面下まで行ったら消す
-                if (top > window.innerHeight) { 
-                    food.remove(); 
-                    clearInterval(timer); 
-                }
+                if (top > window.innerHeight) { food.remove(); clearInterval(timer); }
             }, 20);
 
-            // クリックした時だけ動く！
+            // どの食べ物でもクリックしたらパクッとする
             food.addEventListener('click', () => {
+                // 食べる表情にする
+                neiro.src = 'Neiro2.png';
+                setTimeout(() => neiro.src = 'Neiro1.png', 200);
+
+                // スコア判定
                 if (foodName === 'chocolate.png') {
                     count++;
                 } else {
                     count--;
                 }
                 countDisplay.innerText = count;
-                neiro.src = 'Neiro2.png';
-                setTimeout(() => neiro.src = 'Neiro1.png', 200);
                 
                 food.remove();
                 clearInterval(timer);
