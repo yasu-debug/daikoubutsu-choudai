@@ -88,7 +88,16 @@
             food.addEventListener('click', async () => {
                 if (isGameOver) return;
                 if (!bgmStarted) { bgm.play(); bgmStarted = true; }
-                if (foodName === 'chocolate.png') { count++; } else { count--; }
+             
+                neiro.src = 'Neiro2.png';
+                setTimeout(() => neiro.src = 'Neiro1.png', 200);
+                
+                if (foodName === 'chocolate.png') { count++; } 
+                messageDisplay.innerText = "美味しい！チョコ最高！";
+                }
+                else { count--; }
+                messageDisplay.innerText = "チョコが食べたいよ〜";
+                }
                 countDisplay.innerText = count;
 
                 if (count >= 10) {
