@@ -8,56 +8,36 @@
         #neiro { width: 150px; position: absolute; bottom: 20px; left: calc(50% - 75px); z-index: 5; transition: transform 0.1s; }
         .food { width: 80px; position: absolute; top: -100px; cursor: pointer; z-index: 10; padding: 40px; }
         
-        /* スコア表示を左下に移動 */
-        #score { 
-            position: absolute; 
-            bottom: 50px; 
-            left: 500px; 
-            font-size: 28px; 
-            font-weight: bold; 
-            background: rgba(255, 255, 255, 0.7);
-            padding: 10px;
-            border-radius: 10px;
-        }
-        
-        /* メッセージ枠 */
-        #message { 
-            position: absolute; 
-            bottom: 200px; 
-            left: 30%; 
-            width: 400px; 
-            font-size: 28px; 
-            color: #d32f2f; 
-            font-weight: bold;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 25px; 
-            border-radius: 15px;
-            border: 4px solid #d32f2f;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            text-align: center;
-        }
+        #instructions { font-size: 20px; color: #333; margin-top: 10px; }
+        #score { position: absolute; bottom: 50px; left: 500px; font-size: 28px; font-weight: bold; background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: 10px; }
+        #message { position: absolute; bottom: 200px; left: 30%; width: 400px; font-size: 28px; color: #d32f2f; font-weight: bold; background: rgba(255, 255, 255, 0.9); padding: 25px; border-radius: 15px; border: 4px solid #d32f2f; box-shadow: 0 4px 8px rgba(0,0,0,0.2); text-align: center; }
     </style>
 </head>
 <body>
-    <h1>チョコはクリック！他は無視！</h1>
+    <h1>Neiroにチョコをあげよう！</h1>
+    <div id="instructions">スコア10を目指してね！</div>
     <div id="score">スコア: <span id="count">0</span></div>
     <div id="message"></div>
     <img id="neiro" src="Neiro1.png" alt="Neiro">
 
-   <script>
+    <audio id="bgm" loop>
+        <source src="10時よ.mp3" type="audio/wav">
+    </audio>
+
+    <script>
         let count = 0;
-        let isGameOver = false; // ゲーム終了状態を管理する変数
+        let isGameOver = false;
+        let bgmStarted = false;
         const neiro = document.getElementById('neiro');
         const countDisplay = document.getElementById('count');
         const messageDisplay = document.getElementById('message');
+        const bgm = document.getElementById('bgm');
         const foods = ['Natto.png', 'yakiimo.png', 'chocolate.png', 'Pinnaple.png'];
 
-        // 食べ物を降らせる処理を変数に入れておく
         const gameTimer = setInterval(dropFood, 1500);
 
         function dropFood() {
-            if (isGameOver) return; // ゲームが終わっていたら何も作らない
-
+            if (isGameOver) return;
             const food = document.createElement('img');
             const foodName = foods[Math.floor(Math.random() * foods.length)];
             food.src = foodName;
@@ -73,7 +53,13 @@
             }, 20);
 
             food.addEventListener('click', () => {
-                if (isGameOver) return; // 終わった後はクリックしても反応させない
+                if (isGameOver) return;
+
+                // BGMの開始（初回クリック時のみ）
+                if (!bgmStarted) {
+                    bgm.play();
+                    bgmStarted = true;
+                }
 
                 neiro.src = 'Neiro2.png';
                 setTimeout(() => neiro.src = 'Neiro1.png', 200);
@@ -87,17 +73,16 @@
                 }
                 countDisplay.innerText = count;
 
-                // 10点クリア判定
                 if (count >= 10) {
                     messageDisplay.innerText = "クリア！！やったね！";
-                    isGameOver = true; // ゲーム終了状態にする
-                    clearInterval(gameTimer); // 食べ物を降らせるタイマーを止める
+                    isGameOver = true;
+                    clearInterval(gameTimer);
+                    bgm.pause(); // クリアしたら止める
                 }
                 
                 food.remove();
                 clearInterval(timer);
                 
-                // クリア時はメッセージを消さないように条件分岐
                 if (count < 10) {
                     setTimeout(() => messageDisplay.innerText = "", 2000);
                 }
