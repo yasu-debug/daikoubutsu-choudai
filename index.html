@@ -138,7 +138,7 @@
                     // スピードアップ処理（2点ごとに！）
                     if (count > 0 && count % 2 === 0 && dropInterval > 400) { 
                         clearInterval(gameTimer); 
-                        dropInterval -= 200;
+                        dropInterval -= 800;
                         gameTimer = setInterval(dropFood, dropInterval); 
                     }
                 } else { 
