@@ -187,3 +187,20 @@
                     const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
                     
                     const name = prompt(`クリア！ ${timeTaken} 秒でした！
+                    
+const name = prompt(`クリア！ ${timeTaken} 秒でした！お名前を入力してね！`);
+                    if (name) {
+                        await addDoc(collection(db, "rankings"), { 
+                            name: name, 
+                            score: parseFloat(timeTaken),
+                            createdAt: serverTimestamp() 
+                        });
+                    }
+                    showRanking();
+                }
+                food.remove(); clearInterval(timer);
+            });
+        }
+    </script>
+</body>
+</html>
