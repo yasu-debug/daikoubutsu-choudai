@@ -142,17 +142,18 @@ function showHeart(x, y) {
                 if (foodName === 'chocolate.png') { 
                     count++;
                     messageDisplay.innerText = "美味しい！チョコ最高！";
+                         // 2ポイント増えるごとにスピードアップ！
+                        clearInterval(gameTimer); 今のタイマーを止めて
+                        dropInterval -= 200;// 0.2秒ずつ速くする
+                        gameTimer = setInterval(dropFood, dropInterval); // 新しい速さで再開！
+                    }
+                    
                     // チョコの時だけハートを表示！
                     showHeart(event.clientX, event.clientY);
                 } else { 
                     count--; 
                     messageDisplay.innerText = "チョコが食べたいよ〜";
-                // 2ポイント増えるごとにスピードアップ！
-    if (count % 2 === 0 && dropInterval > 400) { 
-        clearInterval(gameTimer); // 今のタイマーを止めて
-        dropInterval -= 200;      // 0.2秒ずつ速くする
-        gameTimer = setInterval(dropFood, dropInterval); // 新しい速さで再開！
-    }
+
                 messageDisplay.style.display = "block";
                 setTimeout(() => messageDisplay.style.display = "none", 1000);
                 countDisplay.innerText = count;
