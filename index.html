@@ -31,12 +31,30 @@
         @keyframes fadeOut {
             to { opacity: 0; transform: translateY(-80px) rotate(45deg) scale(0.5); }
         }
+        #guide {
+    position: absolute;
+    bottom: 200px;
+    left: calc(50% - 100px);
+    width: 200px;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 20px;
+    border: 3px solid #ff1493;
+    font-weight: bold;
+    color: #333;
+    animation: bounce 2s infinite;
+}
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
     </style>
 </head>
 <body>
     <h1>あの日見たバンドを超える旅：Neiroのチョコ大作戦！</h1>
     <div id="instructions">Neiroと一緒にチョコを集めて、目指せバンドの頂点！10点集めてクリアしてね。</div>
     <div id="score">スコア: <span id="count">0</span></div>
+    <div id="guide">Neiroの顔をクリックして<br>チョコを食べてね！</div>
     
     <a href="https://www.youtube.com/channel/UC9tdREypdhZQ9Hemq82r95Q" target="_blank" class="yt-link" style="position: absolute; bottom: 50px; left: 900px;">
         <img src="logo.png" alt="チャンネルへ">
@@ -126,7 +144,8 @@
             food.addEventListener('click', async (event) => {
                 if (isGameOver) return;
                 if (!bgmStarted) { bgm.play(); bgmStarted = true; }
-                
+                // 最初のクリックでガイドを消す
+                document.getElementById('guide').style.display = 'none';
                 neiro.src = 'Neiro2.png';
                 setTimeout(() => neiro.src = 'Neiro1.png', 200);
                 
