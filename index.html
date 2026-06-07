@@ -70,7 +70,7 @@
 
     <img id="neiro" src="Neiro1.png" alt="Neiro">
     <audio id="bgm" loop><source src="10時よ.mp3" type="audio/wav"></audio>
-
+    <audio id="ok" loop><source src="OKsound.wav" type="audio/wav"></audio>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
@@ -153,7 +153,7 @@
                     count++;
                     messageDisplay.innerText = "美味しい！チョコ最高！";
                     showHeart(event.clientX, event.clientY);
-                    
+                    (!okStarted) { ok.play(); okStarted = true; }
                     // スピードアップ処理（2点ごとに！）
                     if (count > 0 && count % 2 === 0 && dropInterval > 400) { 
                         clearInterval(gameTimer); 
