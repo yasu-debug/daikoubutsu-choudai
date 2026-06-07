@@ -132,8 +132,6 @@ function showHeart(x, y) {
                 if (isGameOver) return;
                 if (!bgmStarted) { bgm.play(); bgmStarted = true; }
                 
-                showHeart(event.clientX, event.clientY);
-                
                 neiro.src = 'Neiro2.png';
                 setTimeout(() => neiro.src = 'Neiro1.png', 200);
                 
