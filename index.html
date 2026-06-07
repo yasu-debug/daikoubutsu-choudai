@@ -70,7 +70,7 @@
 
     <img id="neiro" src="Neiro1.png" alt="Neiro">
     <audio id="bgm" loop><source src="10時よ.mp3" type="audio/wav"></audio>
-    <audio id="ok" loop><source src="OKsound.wav" type="audio/wav"></audio>
+    <audio id="ok" src="OKsound.wav" type="audio/wav"></audio>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
@@ -94,7 +94,6 @@
         // ゲームの全体変数はここでまとめて宣言！
         let count = 0;
         let isGameOver = false;
-        let okStarted = false;
         let bgmStarted = false;
         let dropInterval = 1500;
         let gameTimer = setInterval(dropFood, dropInterval);
