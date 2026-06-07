@@ -94,6 +94,7 @@
         // ゲームの全体変数はここでまとめて宣言！
         let count = 0;
         let isGameOver = false;
+        let okStarted = false;
         let bgmStarted = false;
         let dropInterval = 1500;
         let gameTimer = setInterval(dropFood, dropInterval);
@@ -153,7 +154,11 @@
                     count++;
                     messageDisplay.innerText = "美味しい！チョコ最高！";
                     showHeart(event.clientX, event.clientY);
-                    (!okStarted) { ok.play(); okStarted = true; }
+
+                    // ★音を鳴らす処理（ここを書き換え！）
+                    ok.currentTime = 0; // 再生位置を最初に戻す（これで連打できる！）
+                    ok.play();          // 再生！
+                    
                     // スピードアップ処理（2点ごとに！）
                     if (count > 0 && count % 2 === 0 && dropInterval > 400) { 
                         clearInterval(gameTimer); 
