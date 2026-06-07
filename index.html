@@ -20,13 +20,13 @@
 
         /* ハートのスタイル */
         .heart-effect {
-            position: absolute; width: 20px; height: 20px; background-color: #ff69b4;
-            transform: rotate(45deg); pointer-events: none; animation: fadeOut 0.8s forwards;
-        }
-        .heart-effect::before, .heart-effect::after {
-            content: ""; position: absolute; width: 20px; height: 20px;
-            background-color: #ff69b4; border-radius: 50%;
-        }
+    position: absolute; width: 30px; height: 30px; background-color: #ff1493;
+    transform: rotate(45deg); pointer-events: none; animation: fadeOut 1.0s forwards;
+}
+.heart-effect::before, .heart-effect::after {
+    content: ""; position: absolute; width: 30px; height: 30px;
+    background-color: #ff1493; border-radius: 50%;
+}
         .heart-effect::before { top: -10px; left: 0; }
         .heart-effect::after { top: 0; left: -10px; }
         @keyframes fadeOut {
@@ -74,14 +74,24 @@
         const neiro = document.getElementById('neiro');
         const bgm = document.getElementById('bgm');
 
-        function showHeart(x, y) {
-            const heart = document.createElement('div');
-            heart.className = 'heart-effect';
-            heart.style.left = x + 'px';
-            heart.style.top = y + 'px';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 800);
-        }
+function showHeart(x, y) {
+    // 4方向のずれ（オフセット）
+    const offsets = [
+        { dx: -40, dy: -40 },
+        { dx: 40, dy: -40 },
+        { dx: -40, dy: 40 },
+        { dx: 40, dy: 40 }
+    ];
+
+    offsets.forEach(offset => {
+        const heart = document.createElement('div');
+        heart.className = 'heart-effect';
+        heart.style.left = (x + offset.dx) + 'px';
+        heart.style.top = (y + offset.dy) + 'px';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 1000);
+    });
+}
 
         async function showRanking() {
             document.getElementById('ranking').style.display = "block";
