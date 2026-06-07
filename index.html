@@ -18,15 +18,14 @@
         .yt-link:hover { transform: scale(1.1); }
         .yt-link img { width: 100px; cursor: pointer; }
 
-        /* ハートのスタイル */
         .heart-effect {
-    position: absolute; width: 30px; height: 30px; background-color: #ff1493;
-    transform: rotate(45deg); pointer-events: none; animation: fadeOut 1.0s forwards;
-}
-.heart-effect::before, .heart-effect::after {
-    content: ""; position: absolute; width: 30px; height: 30px;
-    background-color: #ff1493; border-radius: 50%;
-}
+            position: absolute; width: 30px; height: 30px; background-color: #ff1493;
+            transform: rotate(45deg); pointer-events: none; animation: fadeOut 1.0s forwards;
+        }
+        .heart-effect::before, .heart-effect::after {
+            content: ""; position: absolute; width: 30px; height: 30px;
+            background-color: #ff1493; border-radius: 50%;
+        }
         .heart-effect::before { top: -10px; left: 0; }
         .heart-effect::after { top: 0; left: -10px; }
         @keyframes fadeOut {
@@ -55,10 +54,6 @@
     <audio id="bgm" loop><source src="10時よ.mp3" type="audio/wav"></audio>
 
     <script type="module">
-        let count = 0;
-        let dropInterval = 1500; // 最初は1.5秒
-        let gameTimer = setInterval(dropFood, dropInterval);
-        
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
@@ -78,24 +73,24 @@
         const neiro = document.getElementById('neiro');
         const bgm = document.getElementById('bgm');
 
-function showHeart(x, y) {
-    // 4方向のずれ（オフセット）
-    const offsets = [
-        { dx: -40, dy: -40 },
-        { dx: 40, dy: -40 },
-        { dx: -80, dy: 80 },
-        { dx: 80, dy: 80 }
-    ];
+        // ゲームの全体変数はここでまとめて宣言！
+        let count = 0;
+        let isGameOver = false;
+        let bgmStarted = false;
+        let dropInterval = 1500;
+        let gameTimer = setInterval(dropFood, dropInterval);
 
-    offsets.forEach(offset => {
-        const heart = document.createElement('div');
-        heart.className = 'heart-effect';
-        heart.style.left = (x + offset.dx) + 'px';
-        heart.style.top = (y + offset.dy) + 'px';
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 1000);
-    });
-}
+        function showHeart(x, y) {
+            const offsets = [{dx: -40, dy: -40}, {dx: 40, dy: -40}, {dx: -80, dy: 80}, {dx: 80, dy: 80}];
+            offsets.forEach(offset => {
+                const heart = document.createElement('div');
+                heart.className = 'heart-effect';
+                heart.style.left = (x + offset.dx) + 'px';
+                heart.style.top = (y + offset.dy) + 'px';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 1000);
+            });
+        }
 
         async function showRanking() {
             document.getElementById('ranking').style.display = "block";
@@ -110,11 +105,7 @@ function showHeart(x, y) {
             });
         }
 
-        let count = 0;
-        let isGameOver = false;
-        let bgmStarted = false;
         const foods = ['Natto.png', 'yakiimo.png', 'chocolate.png', 'Pinnaple.png'];
-        const gameTimer = setInterval(dropFood, 1500);
 
         function dropFood() {
             if (isGameOver) return;
@@ -142,17 +133,18 @@ function showHeart(x, y) {
                 if (foodName === 'chocolate.png') { 
                     count++;
                     messageDisplay.innerText = "美味しい！チョコ最高！";
-                         // 2ポイント増えるごとにスピードアップ！
-                        clearInterval(gameTimer); 今のタイマーを止めて
-                        dropInterval -= 200;// 0.2秒ずつ速くする
-                        gameTimer = setInterval(dropFood, dropInterval); // 新しい速さで再開！
-                    }
-                    
-                    // チョコの時だけハートを表示！
                     showHeart(event.clientX, event.clientY);
+                    
+                    // スピードアップ処理（2点ごとに！）
+                    if (count > 0 && count % 2 === 0 && dropInterval > 400) { 
+                        clearInterval(gameTimer); 
+                        dropInterval -= 200;
+                        gameTimer = setInterval(dropFood, dropInterval); 
+                    }
                 } else { 
                     count--; 
                     messageDisplay.innerText = "チョコが食べたいよ〜";
+                }
 
                 messageDisplay.style.display = "block";
                 setTimeout(() => messageDisplay.style.display = "none", 1000);
