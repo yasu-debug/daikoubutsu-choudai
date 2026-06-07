@@ -180,6 +180,15 @@ function getSpeedByScore(score) {
                 } else { 
                     count--; 
                     messageDisplay.innerText = "チョコが食べたいよ〜";
+
+                    // ★追加：ここにも速さ更新処理を入れる！
+                    const newInterval = getSpeedByScore(count);
+                    if (newInterval !== dropInterval) {
+                        clearInterval(gameTimer);
+                        dropInterval = newInterval;
+                        gameTimer = setInterval(dropFood, dropInterval);
+                    }
+                    
                 }
 
                 messageDisplay.style.display = "block";
