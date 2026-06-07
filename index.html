@@ -140,6 +140,8 @@ function showHeart(x, y) {
                 if (foodName === 'chocolate.png') { 
                     count++;
                     messageDisplay.innerText = "美味しい！チョコ最高！";
+                    // チョコの時だけハートを表示！
+                    showHeart(event.clientX, event.clientY);
                 } else { 
                     count--; 
                     messageDisplay.innerText = "チョコが食べたいよ〜";
