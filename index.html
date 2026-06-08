@@ -54,7 +54,7 @@
 
     <div id="message"></div>
     <div id="ranking">
-        <h2>ランキング TOP5（速い順）</h2>
+        <h2>ランキング TOP3（速い順）</h2>
         <table><thead><tr><th>名前</th><th>タイム(秒)</th><th>日付</th></tr></thead><tbody id="rank-body"></tbody></table>
         <button onclick="location.reload()">もう一回遊ぶ</button>
     </div>
@@ -81,6 +81,9 @@
         const app = initializeApp(firebaseConfig);
         const analytics = getAnalytics(app);
         const db = getFirestore(app);
+        
+        // 新しいコレクション名を定数にしました
+        const RANKING_COLLECTION = "neiro_dash_rankings";
 
         const messageDisplay = document.getElementById('message');
         const countDisplay = document.getElementById('count');
@@ -118,7 +121,8 @@
         
         async function showRanking() {
             document.getElementById('ranking').style.display = "block";
-            const q = query(collection(db, "rankings"), orderBy("score", "asc"), limit(5));
+            // ★limit(3)に変更しました
+            const q = query(collection(db, RANKING_COLLECTION), orderBy("score", "asc"), limit(3));
             const querySnapshot = await getDocs(q);
             const body = document.getElementById('rank-body');
             body.innerHTML = "";
@@ -188,7 +192,8 @@
                     
                     const name = prompt("クリア！ " + timeTaken + " 秒でした！お名前を入力してね！");
                     if (name) {
-                        await addDoc(collection(db, "rankings"), { 
+                        // ★新しいコレクションに保存します
+                        await addDoc(collection(db, RANKING_COLLECTION), { 
                             name: name, 
                             score: parseFloat(timeTaken),
                             createdAt: serverTimestamp() 
