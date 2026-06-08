@@ -1,231 +1,408 @@
 <!DOCTYPE html>
+
 <html>
+
 <head>
+
     <meta charset="UTF-8">
+
     <title>大好物ちょうだい！</title>
+
     <style>
+
         body { text-align: center; font-family: sans-serif; background: #f0f0f0; overflow: hidden; margin: 0; }
+
         #neiro { width: 150px; position: absolute; bottom: 20px; left: calc(50% - 75px); z-index: 5; transition: transform 0.1s; }
+
         .food { width: 80px; position: absolute; top: -100px; cursor: pointer; z-index: 10; padding: 40px; }
+
         #instructions { font-size: 20px; color: #333; margin-top: 10px; }
+
         #score { position: absolute; bottom: 50px; left: 10%; font-size: 28px; font-weight: bold; background: rgba(255, 255, 255, 0.7); padding: 10px; border-radius: 10px; }
+
         #ranking { display: none; position: absolute; top: 10%; left: 30%; width: 40%; background: white; padding: 20px; border-radius: 15px; border: 4px solid #333; z-index: 100; }
+
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+
         th, td { border: 1px solid #ddd; padding: 8px; }
+
         #message {
+
             position: absolute; bottom: 200px; left: 50%; transform: translateX(-50%);
+
             width: 300px; font-size: 24px; color: #d32f2f; font-weight: bold;
+
             background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: 20px;
+
             border: 4px solid #d32f2f; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+
             text-align: center; display: none; z-index: 20;
+
         }
+
         .yt-link { display: flex; flex-direction: column; align-items: center; transition: transform 0.2s; }
+
         .yt-link:hover { transform: scale(1.1); }
+
         .yt-link img { width: 100px; cursor: pointer; }
+
         .heart-effect {
+
             position: absolute; width: 30px; height: 30px; background-color: #ff1493;
+
             transform: rotate(45deg); pointer-events: none; animation: fadeOut 1.0s forwards;
+
         }
+
         .heart-effect::before, .heart-effect::after {
+
             content: ""; position: absolute; width: 30px; height: 30px;
+
             background-color: #ff1493; border-radius: 50%;
+
         }
+
         .heart-effect::before { top: -10px; left: 0; }
+
         .heart-effect::after { top: 0; left: -10px; }
+
         @keyframes fadeOut { to { opacity: 0; transform: translateY(-80px) rotate(45deg) scale(0.5); } }
+
         #guide {
+
             position: absolute; bottom: 200px; left: calc(50% - 100px); width: 200px;
+
             background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 20px;
+
             border: 3px solid #ff1493; font-weight: bold; color: #333; animation: bounce 2s infinite;
+
         }
+
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
     </style>
+
 </head>
+
 <body>
+
     <h1>あの日見たバンドを超える旅：Neiroのチョコ大作戦！</h1>
+
     <div id="instructions">Neiroと一緒にチョコを10個集めろ！タイムアタック開始！</div>
+
     <div id="score">スコア: <span id="count">0</span></div>
+
     <div id="guide">Neiroの顔をクリックして<br>チョコを食べてね！</div>
+
     
+
     <a href="https://www.youtube.com/channel/UC9tdREypdhZQ9Hemq82r95Q" target="_blank" class="yt-link" style="position: absolute; bottom: 50px; right: 50px;">
+
         <img src="logo.png" alt="チャンネルへ">
+
         <div style="font-weight: bold; margin-top: -10px;">YouTubeへ</div>
+
     </a>
 
+
+
     <div id="message"></div>
+
     <div id="ranking">
-        <h2>ランキング TOP3（速い順）</h2>
+
+        <h2>ランキング TOP5（速い順）</h2>
+
         <table><thead><tr><th>名前</th><th>タイム(秒)</th><th>日付</th></tr></thead><tbody id="rank-body"></tbody></table>
+
         <button onclick="location.reload()">もう一回遊ぶ</button>
+
     </div>
 
+
+
     <img id="neiro" src="Neiro1.png" alt="Neiro">
+
     <audio id="bgm" loop><source src="10時よ.mp3" type="audio/wav"></audio>
+
     <audio id="ok" src="OKsound.wav" type="audio/wav"></audio>
 
+
+
     <script type="module">
+
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
         import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
 
+
+
         const firebaseConfig = {
+
             apiKey: "AIzaSyACV13o8mGiTP6m2wtvRPBG_wX2Xcbb-hI",
+
             authDomain: "neirogameanoban.firebaseapp.com",
+
             projectId: "neirogameanoban",
+
             storageBucket: "neirogameanoban.firebasestorage.app",
+
             messagingSenderId: "884708706267",
+
             appId: "1:884708706267:web:b9ffc17361554427aa89fe",
+
             measurementId: "G-303LBLLY8B"
+
         };
 
+
+
         const app = initializeApp(firebaseConfig);
+
         const analytics = getAnalytics(app);
+
         const db = getFirestore(app);
-        
-        // 新しいコレクション名を定数にしました
-        const RANKING_COLLECTION = "rankings";
+
+
 
         const messageDisplay = document.getElementById('message');
+
         const countDisplay = document.getElementById('count');
+
         const neiro = document.getElementById('neiro');
+
         const bgm = document.getElementById('bgm');
+
         const ok = document.getElementById('ok');
 
+
+
         let count = 0;
+
         let isGameOver = false;
+
         let bgmStarted = false;
+
         let startTime; 
+
         let dropInterval = 1500;
+
         let gameTimer = setInterval(dropFood, dropInterval);
 
 
-async function checkAndSaveScore(name, time) {
-            // 1. 現在のランキング上位3名を取得
-            const q = query(collection(db, RANKING_COLLECTION), orderBy("score", "asc"), limit(3));
-            const snapshot = await getDocs(q);
-            
-            let scores = [];
-            snapshot.forEach(doc => scores.push(doc.data().score));
 
-            // 2. まだ3人いないなら保存！ / 3人いても、今回のタイムが3位より速ければ保存！
-            if (scores.length < 3 || time < scores[2]) {
-                await addDoc(collection(db, RANKING_COLLECTION), { 
-                    name: name, 
-                    score: time,
-                    createdAt: serverTimestamp() 
-                });
-                alert("おめでとう！ランキング入りしました！");
-            } else {
-                alert("惜しい！トップ3には届きませんでした…また挑戦してね！");
-            }
-            showRanking();
-        }
-
-
-        
         function showHeart(x, y) {
+
             const offsets = [{dx: -40, dy: -40}, {dx: 40, dy: -40}, {dx: -80, dy: 80}, {dx: 80, dy: 80}];
+
             offsets.forEach(offset => {
+
                 const heart = document.createElement('div');
+
                 heart.className = 'heart-effect';
+
                 heart.style.left = (x + offset.dx) + 'px';
+
                 heart.style.top = (y + offset.dy) + 'px';
+
                 document.body.appendChild(heart);
+
                 setTimeout(() => heart.remove(), 1000);
+
             });
+
         }
+
+
 
         function getSpeedByScore(score) {
+
             if (score < 0) return 2500;
+
             if (score < 2) return 1500;
+
             if (score < 4) return 1300;
+
             if (score < 6) return 1100;
+
             if (score < 8) return 900;
+
             return 700;
+
         }
+
         
+
         async function showRanking() {
+
             document.getElementById('ranking').style.display = "block";
-            // ★limit(3)に変更しました
-            const q = query(collection(db, RANKING_COLLECTION), orderBy("score", "asc"), limit(3));
+
+            const q = query(collection(db, "rankings"), orderBy("score", "asc"), limit(5));
+
             const querySnapshot = await getDocs(q);
+
             const body = document.getElementById('rank-body');
+
             body.innerHTML = "";
+
             querySnapshot.forEach((doc) => {
+
                 const data = doc.data();
+
                 const date = data.createdAt ? data.createdAt.toDate().toLocaleDateString() : "---";
+
                 body.innerHTML += `<tr><td>${data.name}</td><td>${data.score} 秒</td><td>${date}</td></tr>`;
+
             });
+
         }
+
+
 
         const foods = ['Natto.png', 'yakiimo.png', 'chocolate.png', 'Pinnaple.png'];
 
+
+
         function dropFood() {
+
             if (isGameOver) return;
+
             const food = document.createElement('img');
+
             const foodName = foods[Math.floor(Math.random() * foods.length)];
+
             food.src = foodName;
+
             food.className = 'food';
+
             food.style.left = (neiro.offsetLeft + 35) + 'px'; 
+
             document.body.appendChild(food);
 
+
+
             let top = -100;
+
             const timer = setInterval(() => {
+
                 top += 3;
+
                 food.style.top = top + 'px';
+
                 if (top > window.innerHeight) { food.remove(); clearInterval(timer); }
+
             }, 20);
 
+
+
             food.addEventListener('click', async (event) => {
+
                 if (isGameOver) return;
+
                 if (!bgmStarted) { 
+
                     bgm.play(); 
+
                     bgmStarted = true; 
+
                     startTime = Date.now();
+
                 }
+
                 document.getElementById('guide').style.display = 'none';
+
                 neiro.src = 'Neiro2.png';
+
                 setTimeout(() => neiro.src = 'Neiro1.png', 200);
+
                 
+
                 if (foodName === 'chocolate.png') { 
+
                     count++;
+
                     messageDisplay.innerText = "美味しい！チョコ最高！";
+
                     showHeart(event.clientX, event.clientY);
+
                     ok.currentTime = 0;
+
                     ok.play();
+
                 } else { 
+
                     count--; 
+
                     messageDisplay.innerText = "チョコが食べたいよ〜";
+
                 }
+
+
 
                 const newInterval = getSpeedByScore(count);
+
                 if (newInterval !== dropInterval) {
+
                     clearInterval(gameTimer);
+
                     dropInterval = newInterval;
+
                     gameTimer = setInterval(dropFood, dropInterval);
+
                 }
+
+
 
                 messageDisplay.style.display = "block";
+
                 setTimeout(() => messageDisplay.style.display = "none", 1000);
+
                 countDisplay.innerText = count;
 
+
+
                 if (count >= 10) {
+
                     isGameOver = true;
+
                     bgm.pause();
+
                     const endTime = Date.now();
+
                     const timeTaken = ((endTime - startTime) / 1000).toFixed(2);
+
                     
+
                     const name = prompt("クリア！ " + timeTaken + " 秒でした！お名前を入力してね！");
+
                     if (name) {
-                        // ★さっき作ったチェック関数を呼び出す
-                        await checkAndSaveScore(name, parseFloat(timeTaken));
-                    } else {
-                        showRanking();
+
+                        await addDoc(collection(db, "rankings"), { 
+
+                            name: name, 
+
+                            score: parseFloat(timeTaken),
+
+                            createdAt: serverTimestamp() 
+
+                        });
+
                     }
+
+                    showRanking();
+
                 }
+
                 food.remove(); clearInterval(timer);
+
             });
+
         }
+
     </script>
+
 </body>
-</html>
+
+</html> 
+
