@@ -98,6 +98,31 @@
         let dropInterval = 1500;
         let gameTimer = setInterval(dropFood, dropInterval);
 
+
+async function checkAndSaveScore(name, time) {
+            // 1. 現在のランキング上位3名を取得
+            const q = query(collection(db, RANKING_COLLECTION), orderBy("score", "asc"), limit(3));
+            const snapshot = await getDocs(q);
+            
+            let scores = [];
+            snapshot.forEach(doc => scores.push(doc.data().score));
+
+            // 2. まだ3人いないなら保存！ / 3人いても、今回のタイムが3位より速ければ保存！
+            if (scores.length < 3 || time < scores[2]) {
+                await addDoc(collection(db, RANKING_COLLECTION), { 
+                    name: name, 
+                    score: time,
+                    createdAt: serverTimestamp() 
+                });
+                alert("おめでとう！ランキング入りしました！");
+            } else {
+                alert("惜しい！トップ3には届きませんでした…また挑戦してね！");
+            }
+            showRanking();
+        }
+
+
+        
         function showHeart(x, y) {
             const offsets = [{dx: -40, dy: -40}, {dx: 40, dy: -40}, {dx: -80, dy: 80}, {dx: 80, dy: 80}];
             offsets.forEach(offset => {
@@ -192,14 +217,11 @@
                     
                     const name = prompt("クリア！ " + timeTaken + " 秒でした！お名前を入力してね！");
                     if (name) {
-                        // ★新しいコレクションに保存します
-                        await addDoc(collection(db, RANKING_COLLECTION), { 
-                            name: name, 
-                            score: parseFloat(timeTaken),
-                            createdAt: serverTimestamp() 
-                        });
+                        // ★さっき作ったチェック関数を呼び出す
+                        await checkAndSaveScore(name, parseFloat(timeTaken));
+                    } else {
+                        showRanking();
                     }
-                    showRanking();
                 }
                 food.remove(); clearInterval(timer);
             });
